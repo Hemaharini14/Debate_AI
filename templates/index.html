@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DebateAI</title>
+  <link rel="stylesheet" href="/static/css/styles.css"/>
+</head>
+<body>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="loginPage" class="page active">
+  <div class="login-bg"></div>
+  <div class="login-grid"></div>
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="lg-icon">&#x2694;</div>
+      <h1>DebateAI</h1>
+      <p>Your intelligent debate training partner</p>
+    </div>
+    <div class="login-card">
+      <div class="ltabs">
+        <button class="ltab on" id="ltab1" onclick="switchTab('login')">Sign In</button>
+        <button class="ltab"    id="ltab2" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+      <div id="loginForm">
+        <div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="lEmail" placeholder="you@example.com"/></div>
+        <div class="fg"><label class="fl">Password</label><input type="password" class="fi" id="lPass" placeholder="Password"/></div>
+        <button class="lbtn" onclick="doLogin()">Sign In</button>
+      </div>
+      <div id="signupForm" style="display:none">
+        <div class="fg"><label class="fl">Full Name</label><input type="text" class="fi" id="sName" placeholder="Your name"/></div>
+        <div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="sEmail" placeholder="you@example.com"/></div>
+        <div class="fg"><label class="fl">Password</label><input type="password" class="fi" id="sPass" placeholder="Min 6 characters"/></div>
+        <button class="lbtn" onclick="doSignup()">Create Account</button>
+      </div>
+      <div class="lerr" id="lerr"></div>
+      <div class="demo-hint">Demo: any email + 6-char password</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ COACH PAGE ══════════ -->
+<div id="coachPage" class="page">
+  <nav class="navbar">
+    <div class="nbrand"><div class="nicon">&#x2694;</div>DebateAI</div>
+    <div class="nlinks">
+      <button class="nlink on" onclick="gotoPage('coach')">Coach</button>
+      <button class="nlink"    onclick="gotoPage('debate')">Live Debate</button>
+    </div>
+    <div class="nright">
+      <div class="navatar" id="av1">U</div>
+      <button class="nlogout" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <div style="max-width:1080px;margin:0 auto;padding:36px 24px">
+    <div style="text-align:center;margin-bottom:44px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.9rem,5vw,2.9rem);font-weight:900;letter-spacing:-.03em">
+        Your AI <em style="font-style:italic;color:var(--accent)">Debate Coach</em>
+      </h2>
+      <p style="color:var(--muted);margin-top:10px;font-size:.92rem">Generate structured arguments with full tone control</p>
+    </div>
+
+    <div class="card">
+      <label class="lbl" for="topicInput">Debate Topic</label>
+      <textarea id="topicInput" rows="2" placeholder="e.g. Social media does more harm than good to society"></textarea>
+    </div>
+
+    <label class="lbl">Argument Tone</label>
+    <div class="tone-grid" id="toneGrid">
+      <button class="tone-btn on"  data-tone="Neutral"       onclick="setTone(this)">Neutral</button>
+      <button class="tone-btn"     data-tone="Aggressive"    onclick="setTone(this)">Aggressive</button>
+      <button class="tone-btn"     data-tone="Empathetic"    onclick="setTone(this)">Empathetic</button>
+      <button class="tone-btn"     data-tone="Humorous"      onclick="setTone(this)">Humorous</button>
+      <button class="tone-btn"     data-tone="Authoritative" onclick="setTone(this)">Authoritative</button>
+      <button class="tone-btn"     data-tone="Diplomatic"    onclick="setTone(this)">Diplomatic</button>
+      <button class="tone-btn"     data-tone="Passionate"    onclick="setTone(this)">Passionate</button>
+      <button class="tone-btn"     data-tone="Sarcastic"     onclick="setTone(this)">Sarcastic</button>
+    </div>
+
+    <label class="lbl">Choose Side</label>
+    <div class="side-row">
+      <button class="sbtn"     id="btn-pro"  onclick="setSide('pro')">For (Pro)</button>
+      <button class="sbtn s-both" id="btn-both" onclick="setSide('both')">Both Sides</button>
+      <button class="sbtn"     id="btn-con"  onclick="setSide('con')">Against (Con)</button>
+    </div>
+
+    <div class="ctrl-grid">
+      <div>
+        <label class="lbl" for="styleSelect">Argument Style</label>
+        <select id="styleSelect">
+          <option value="Academic">Academic</option>
+          <option value="Street Smart">Street Smart</option>
+          <option value="Socratic">Socratic</option>
+          <option value="Lawyer Mode">Lawyer Mode</option>
+        </select>
+      </div>
+      <div>
+        <label class="lbl">Debate Rounds</label>
+        <div class="rwrap">
+          <button class="rbtn"    id="r1" onclick="setRounds(1)">1</button>
+          <button class="rbtn on" id="r2" onclick="setRounds(2)">2</button>
+          <button class="rbtn"    id="r3" onclick="setRounds(3)">3</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="genbtn" id="genBtn" onclick="generateDebate()">Generate Arguments</button>
+
+    <label class="lbl">Quick Examples</label>
+    <div class="chips">
+      <div class="chip" onclick="setTopic('AI will replace most jobs within 10 years')">AI and Jobs</div>
+      <div class="chip" onclick="setTopic('Online education is better than classroom learning')">Online vs Classroom</div>
+      <div class="chip" onclick="setTopic('Social media should be banned for users under 16')">Social Media Age Ban</div>
+      <div class="chip" onclick="setTopic('Space exploration is a waste of government funding')">Space Funding</div>
+      <div class="chip" onclick="setTopic('Cryptocurrency will replace traditional banking')">Crypto vs Banking</div>
+    </div>
+
+    <div class="sbar" id="coachSbar"><div class="sdot"></div><span id="coachStxt">Ready to coach</span></div>
+
+    <div id="coachOutput">
+      <div class="empty-state" id="coachEmpty">
+        <div class="empty-icon">&#x1F4DC;</div>
+        <div>Enter a topic and generate arguments to get started</div>
+      </div>
+      <div id="coachResult" style="display:none">
+        <div class="panels" id="panelsGrid">
+          <div class="panel pp" id="leftPanel" style="display:none">
+            <div class="ph"><div class="pdot"></div><div class="ptitle" id="leftTitle">PRO</div></div>
+            <div class="pbody" id="leftBody"></div>
+          </div>
+          <div class="panel cp" id="rightPanel" style="display:none">
+            <div class="ph"><div class="pdot"></div><div class="ptitle">CON</div></div>
+            <div class="pbody" id="rightBody"></div>
+          </div>
+        </div>
+        <div class="verdict-card" id="verdictBox" style="display:none">
+          <div class="vlbl">&#x2696; Verdict</div>
+          <div class="vtxt" id="verdictTxt"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LIVE DEBATE ══════════ -->
+<div id="debatePage" class="page">
+  <nav class="navbar">
+    <div class="nbrand"><div class="nicon">&#x2694;</div>DebateAI</div>
+    <div class="nlinks">
+      <button class="nlink"    onclick="gotoPage('coach')">Coach</button>
+      <button class="nlink on" onclick="gotoPage('debate')">Live Debate</button>
+    </div>
+    <div class="nright">
+      <div class="navatar" id="av2">U</div>
+      <button class="nlogout" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="debate-wrap">
+    <div class="page-hero">
+      <h2>Live <em>Debate</em> Arena</h2>
+      <p>Fight the AI one-on-one, or invite a friend. Voice or text. Full analysis at the end.</p>
+    </div>
+
+    <!-- Setup -->
+    <div class="setup-card" id="debateSetup">
+      <h3>Configure Your Debate</h3>
+      <div class="setup-grid">
+        <div>
+          <label class="lbl" for="debateTopic">Topic</label>
+          <textarea id="debateTopic" rows="2" placeholder="e.g. Social media causes more harm than good"></textarea>
+        </div>
+        <div>
+          <label class="lbl" for="debateStance">Your Position</label>
+          <select id="debateStance">
+            <option value="pro">I argue FOR the topic</option>
+            <option value="con">I argue AGAINST the topic</option>
+          </select>
+          <div style="margin-top:12px">
+            <label class="lbl" for="debateMaxR">Max Rounds</label>
+            <select id="debateMaxR">
+              <option value="3">3 rounds</option>
+              <option value="5" selected>5 rounds</option>
+              <option value="7">7 rounds</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <label class="lbl">Bot Tone</label>
+      <div class="tone-grid" id="debateToneGrid" style="margin-bottom:22px">
+        <button class="tone-btn on"  data-tone="Neutral"       onclick="setDebateTone(this)">Neutral</button>
+        <button class="tone-btn"     data-tone="Aggressive"    onclick="setDebateTone(this)">Aggressive</button>
+        <button class="tone-btn"     data-tone="Empathetic"    onclick="setDebateTone(this)">Empathetic</button>
+        <button class="tone-btn"     data-tone="Authoritative" onclick="setDebateTone(this)">Authoritative</button>
+        <button class="tone-btn"     data-tone="Diplomatic"    onclick="setDebateTone(this)">Diplomatic</button>
+        <button class="tone-btn"     data-tone="Passionate"    onclick="setDebateTone(this)">Passionate</button>
+      </div>
+
+      <button class="start-btn" onclick="startAIDebate()">Debate vs AI</button>
+
+      <div class="room-section">
+        <h4>Multiplayer - Debate a Friend</h4>
+        <div class="room-row">
+          <input type="text" class="room-input" id="roomInput" placeholder="Room code (e.g. DEBATE42)" maxlength="12"/>
+          <button class="rbtn-sm rbtn-create" onclick="createRoom()">Create Room</button>
+          <button class="rbtn-sm rbtn-join"   onclick="joinRoom()">Join Room</button>
+        </div>
+        <div class="room-status" id="roomStatus"></div>
+        <div class="copy-link"   id="copyLink"   onclick="copyRoomLink()">Copy room code</div>
+      </div>
+    </div>
+
+    <!-- Arena -->
+    <div class="arena" id="debateArena">
+      <div class="topic-banner">
+        <div class="topic-txt" id="arenaTopic">"..."</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <div class="rbadge"  id="roundBadge">Round 1/5</div>
+          <div class="mpbadge" id="mpBadge">vs AI</div>
+        </div>
+      </div>
+
+      <div class="chat-box">
+        <div class="chat-msgs" id="chatMsgs">
+          <div class="typing" id="typingEl"><div class="tdots"><span></span><span></span><span></span></div></div>
+        </div>
+        <div class="chat-input-row">
+          <textarea class="chat-ta" id="userInput" rows="1" placeholder="Type your argument... (Enter to send, Shift+Enter for newline)"></textarea>
+          <button class="mic-btn" id="micBtn" onclick="toggleMic()">&#x1F3A4;</button>
+          <button class="send-btn" id="sendBtn" onclick="sendArg()">&#x27A4;</button>
+        </div>
+      </div>
+
+      <div class="speech-hint" id="speechHint">Click the mic to speak your argument (Chrome recommended)</div>
+
+      <div class="debate-ctrls">
+        <button class="dbtn primary" onclick="sendArg()">Send</button>
+        <button class="dbtn"         onclick="getHint()">Get Hint</button>
+        <button class="dbtn danger"  onclick="endDebate()">End + Analyse</button>
+      </div>
+
+      <!-- Analysis -->
+      <div class="analysis-panel" id="analysisPanel">
+        <div class="ah">
+          <h3>&#x1F3AF; Debate Analysis</h3>
+          <p id="analysisSub">Your performance breakdown</p>
+        </div>
+        <div class="ab">
+          <div class="score-grid">
+            <div class="sc"><div class="sv g" id="sLogic">--</div><div class="slbl">Logic</div></div>
+            <div class="sc"><div class="sv b" id="sPersuasion">--</div><div class="slbl">Persuasion</div></div>
+            <div class="sc"><div class="sv a" id="sOverall">--</div><div class="slbl">Overall</div></div>
+          </div>
+          <div class="as"><h4>Summary</h4><div class="atxt" id="aSummary">...</div></div>
+          <div class="as"><h4>Strengths</h4><div class="slist" id="aStrengths"></div></div>
+          <div class="as"><h4>Areas to Improve</h4><div class="slist" id="aWeaknesses"></div></div>
+          <div class="as"><h4>Verdict</h4><div class="atxt" id="aVerdict">...</div></div>
+          <button class="rmatch-btn" onclick="resetDebate()">Debate Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>
